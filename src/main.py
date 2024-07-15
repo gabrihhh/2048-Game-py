@@ -97,9 +97,7 @@ def create_cube():
             case 3:
                 y = 290
 
-        if [x,y] in position_ocuped:
-            print("existe")
-        else:
+        if not [x,y] in position_ocuped:
             position_ocuped.append([x,y])
             break
 
@@ -107,11 +105,35 @@ def create_cube():
     list_cubes.append(square)
     disabled_game = False
 def draw_cubes(screen):
+    global position_ocuped
+    position_ocuped = [[cube.x,cube.y] for cube in list_cubes]
     for square in list_cubes:
         square.draw(screen)
 
 
 def move_up():
+    number = 0
+    for cube in list_cubes:
+        cube.stopped = False
+
+    while not all(cube.stopped for cube in list_cubes):
+        cube.y = cube.y-1
+
+        for position in position_ocuped:
+            if cube.x == position[0] and cube.y < position[1] + 80:
+                cube.y = position[1] + 80
+                cube.stopped = True
+                number = number + 1
+
+        if cube.y < 50:
+            cube.y = 50
+            cube.stopped = True
+            number = number + 1
+        
+
+
+        if len(list_cubes) == number:
+            break
 
     
     threading.Timer(0.5, create_cube).start()
